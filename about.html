@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>TUGAS EKSPLORASI DAN VISUALISASI DATA KATEGORIK</title>
+
+<script src="site_libs/header-attrs-2.28/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">My Website</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">TUGAS EKSPLORASI DAN VISUALISASI DATA
+KATEGORIK</h1>
+
+</div>
+
+
+<div id="bar-chart" class="section level2">
+<h2>BAR CHART</h2>
+<pre class="r"><code>library(ggplot2)</code></pre>
+<pre><code>## Warning: package &#39;ggplot2&#39; was built under R version 4.3.2</code></pre>
+<pre class="r"><code>ggplot(data = esoph, mapping = aes(x = alcgp)) + 
+  geom_bar()</code></pre>
+<p><img src="about_files/figure-html/unnamed-chunk-1-1.png" width="672" /></p>
+<p>Dataset “Esoph” merupakan dataset R Studio yang menyajikan informasi
+seputar hubungan antara konsumsi alkohol dan konsumsi tembakau dengan
+kanker esofagus. Dalam hal ini, dataset “Esoph” memiliki beberapa
+variabel yang meliputi : - egegp : Kelompok Umur - alcgp : Kelompok
+Konsumsi Alkohol - tobgp : Kelompok Konsumsi Tembakau - ncases : Jumlah
+Individu yang terdiagnosis kanker esofagus - ncontrols : Jumlah individu
+dalam kelompok tersebut yang tidak terdiagnosis kanker esofagus.</p>
+<p>Data set ini terdiri dari 88 observasi dengan total 5 variabel.</p>
+<p>Secara default, geom_bar() menggunakan stat = “count”, yang berarti
+ia akan menghitung jumlah observasi (frekuensi) untuk setiap kategori
+dari variabel yang disebutkan pada sumbu x dan menampilkannya sebagai
+tinggi batang. Namun, ketika Anda menggunakan stat = “identity”, Anda
+memberitahu ggplot2 untuk menggunakan nilai yang sudah ada di data
+sebagai tinggi batang, bukan menghitung frekuensi.</p>
+</div>
+<div id="bar-chart-dengan-tabel-frekuensi" class="section level2">
+<h2>BAR CHART DENGAN TABEL FREKUENSI</h2>
+<div id="membuat-tabel-frekuensi" class="section level3">
+<h3>Membuat tabel frekuensi</h3>
+<pre class="r"><code>freqtab &lt;- as.data.frame(table(esoph$alcgp))
+freqtab</code></pre>
+<pre><code>##        Var1 Freq
+## 1 0-39g/day   23
+## 2     40-79   23
+## 3    80-119   21
+## 4      120+   21</code></pre>
+</div>
+<div id="membuat-bar-chart" class="section level3">
+<h3>Membuat Bar Chart</h3>
+<pre class="r"><code>ggplot(data = freqtab, mapping = aes(x = Var1, y = Freq)) + 
+  geom_bar(stat = &quot;identity&quot;)</code></pre>
+<p><img src="about_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<p>Cara lain yang dapat digunakan untuk membuat diagram batang ketika
+data yang kita miliki sudah dalam bentuk tabel frekuensi adalah dengan
+geom_col().</p>
+<pre class="r"><code>ggplot(data = freqtab, mapping = aes(x = Var1, y = Freq)) + 
+  geom_col()</code></pre>
+<p><img src="about_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+</div>
+<div id="modifikasi-bar-chart" class="section level3">
+<h3>Modifikasi Bar Chart</h3>
+<p>Menambahkan judul, mewarnai grafik, dan memberikan label pada setiap
+batang.</p>
+<pre class="r"><code>ggplot(data = freqtab, mapping = aes(x = Var1, y = Freq)) + 
+  geom_col(fill = &quot;coral&quot;, alpha = 0.7) + 
+  labs(title = &quot;Frekuensi berdasarkan tingkat konsumsi alkohol&quot;, 
+       x = &quot;Konsumsi Alkohol&quot;, 
+       y = &quot;Frekuensi&quot;) + 
+  geom_text(aes(label = Freq), vjust = -0.25)</code></pre>
+<p><img src="about_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+</div>
+</div>
+<div id="grouped-bar-chart" class="section level2">
+<h2>GROUPED BAR CHART</h2>
+<pre class="r"><code>ggplot(data = esoph, mapping=aes(x = alcgp, fill = as.factor(tobgp))) + 
+  geom_bar(position = &quot;dodge&quot;, stat = &quot;count&quot;) +
+  labs(
+    x = &quot;Tingkat Konsumsi Alkohol&quot;,
+    fill = &quot;Tingkat Konsumsi Tembakau&quot;,
+    y = &quot;Jumlah Observasi&quot;
+  ) +
+  scale_fill_brewer(palette = &quot;Paired&quot;) +
+  theme_light()</code></pre>
+<p><img src="about_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+</div>
+<div id="pie-chart" class="section level2">
+<h2>PIE CHART</h2>
+<p>Menyiapkan data dengan meringkas menjadi tabel frekuensi</p>
+<pre class="r"><code>library(dplyr)</code></pre>
+<pre><code>## Warning: package &#39;dplyr&#39; was built under R version 4.3.2</code></pre>
+<pre><code>## 
+## Attaching package: &#39;dplyr&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:stats&#39;:
+## 
+##     filter, lag</code></pre>
+<pre><code>## The following objects are masked from &#39;package:base&#39;:
+## 
+##     intersect, setdiff, setequal, union</code></pre>
+<pre class="r"><code>df &lt;- esoph %&gt;%
+  group_by(alcgp) %&gt;%
+  summarise(counts = n())
+df</code></pre>
+<pre><code>## # A tibble: 4 × 2
+##   alcgp     counts
+##   &lt;ord&gt;      &lt;int&gt;
+## 1 0-39g/day     23
+## 2 40-79         23
+## 3 80-119        21
+## 4 120+          21</code></pre>
+<p>Mengitung posisi label teks sebagai jumlah kumulatif proporsi.</p>
+<pre class="r"><code>df &lt;- df %&gt;%
+  arrange(desc(alcgp)) %&gt;%
+  mutate(
+    prop = round(counts * 100 / sum(counts), 1),
+    lab.ypos = cumsum(prop) - 0.5 * prop
+  )
+head(df, 4)</code></pre>
+<pre><code>## # A tibble: 4 × 4
+##   alcgp     counts  prop lab.ypos
+##   &lt;ord&gt;      &lt;int&gt; &lt;dbl&gt;    &lt;dbl&gt;
+## 1 120+          21  23.9     12.0
+## 2 80-119        21  23.9     35.8
+## 3 40-79         23  26.1     60.9
+## 4 0-39g/day     23  26.1     87.0</code></pre>
+<ul>
+<li>arrange(desc(alcgp)) : mengurutkan kategori alhokol dari terbesar ke
+terkecil</li>
+<li>prop=round(counts * 100 / sum(counts), 1)) : menghitung proporsi
+setiap kategori dalam presentase</li>
+<li>lab.ypos=cumsum(prop) - 0.5 * prop) : menentukan posisi teks pada
+pie chart agar berada di tengah-tengah</li>
+</ul>
+<p>Membuat grafik Pie Chart</p>
+<pre class="r"><code>library(ggplot2)
+library(ggpubr)</code></pre>
+<pre><code>## Warning: package &#39;ggpubr&#39; was built under R version 4.3.3</code></pre>
+<pre class="r"><code>ggplot(df, aes(x = &quot;&quot;, y = prop, fill = alcgp)) +
+  geom_bar(width = 1, stat = &quot;identity&quot;, color = &quot;white&quot;) +
+  geom_text(aes(y = lab.ypos, label = paste0(prop, &quot;%&quot;)), color = &quot;white&quot;) +
+  coord_polar(&quot;y&quot;, start = 0) +
+  ggpubr::fill_palette(&quot;jco&quot;) +
+  theme_void() +
+  labs(fill = &quot;Konsumsi Alkohol&quot;, title = &quot;Distribusi Konsumsi Alkohol dalam Dataset Esoph&quot;)</code></pre>
+<p><img src="about_files/figure-html/unnamed-chunk-9-1.png" width="672" />
+- geom_bar(width = 1, stat = “identity”, color = “white”) : membuat bar
+chart dengan warna putih sebagai batas antar bagian - geom_text(aes(y =
+lab.ypos, label = paste0(prop, “%”)), color = “white”) : menambahkan
+label presentase pada tiap bagian pie chart - coord_polar(“y”, start =
+0) : mengubah bar chart menjadi pie chart - ggpubr::fill_palette(“jco”)
+: menggunakan palet warna dari ggpubr</p>
+</div>
+<div id="needle-chart" class="section level2">
+<h2>NEEDLE CHART</h2>
+<pre class="r"><code>library(ggplot2)
+ggplot(data = freqtab, mapping=aes(x = reorder(Var1, Freq), y = Freq)) +
+  geom_segment(aes(x = reorder(Var1, Freq),
+                   xend = reorder(Var1, Freq),
+                   y = 0, yend = Freq),
+               color = &quot;skyblue&quot;) +
+  geom_point(color = &quot;navyblue&quot;, size = 4, alpha = 0.6) +
+  geom_text(aes(label = Freq), vjust = -1.00) +
+  coord_flip() +
+  labs(
+    y = &quot;Jumlah Observasi&quot;,
+    x = &quot;Tingkat Konsumsi Alkohol&quot;,
+    title = &quot;Distribusi Konsumsi Alkohol dalam Dataset Esoph&quot;
+  ) +
+  theme_minimal()</code></pre>
+<p><img src="about_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+</div>
+<div id="stacked-bar-chart" class="section level2">
+<h2>STACKED BAR CHART</h2>
+<pre class="r"><code>ggplot(data=esoph,
+   mapping=aes(x=alcgp, fill=as.factor(tobgp)))+
+  geom_bar(position = &quot;stack&quot;, stat=&quot;count&quot;)+
+ 
+  labs(x=&quot;Tingkat Konsumsi Alkohol&quot;, fill=&quot;Tingkat Konsumsi Tembakau&quot;,
+       y=&quot;Jumlah Observasi&quot;)+
+  scale_fill_brewer(palette=&quot;Set3&quot;)+
+  theme_light()  </code></pre>
+<p><img src="about_files/figure-html/unnamed-chunk-11-1.png" width="672" />
+Interpretasi : Berwarna merah/pink dengan 30+ batang tembakau per hari :
+mencapai sekitar 5 di semua kategori konsumsi alkohol ada sekitar 5
+orang dalam tiap kategori alkohol yang merokok lebih dari 30 batang per
+hari</p>
+<p>Berwarna Ungu dengan 20-29 batang per hari : tingginya bertambah dari
+5 ke sekitar 10 artinya dalam tiap kelompok konsumsi alkohol adalah
+sekitar 5 lagi keatas untuk yang merokok lebih dari 20 batang per
+hari</p>
+<p>Berwarna kuning dengan 10-19 batang per hari : tingginya mencapai
+lebih dari 15. Artinya terdapat tambahan sekitar 5-7 orang yang merokok
+10-19 batang per hari</p>
+<p>Berwarna hijau dengan 0-9 batang per hari : mencapai sekitar lebih
+dari 20 yang mana sebagian besar orang dalam tiap kelompok konsumsi
+alkohol hanya merokok 0-9 batang per hari</p>
+<p>Simpulan : Warna lebih bawah (merah dan ungu) : menunjukkan kelompok
+dengan konsumsi tembakau tinggi tetapi jumlah mereka sedikit warna lebih
+atas (kuning, hijau) : menunjukkan kelompok dengan konsumsi tembakau
+lebih rendah tetapi jumlah mereka banyak.</p>
+</div>
+<div id="map" class="section level2">
+<h2>MAP</h2>
+<div id="data-spasial" class="section level3">
+<h3>DATA SPASIAL</h3>
+<pre class="r"><code>#Import Data
+library(readxl)</code></pre>
+<pre><code>## Warning: package &#39;readxl&#39; was built under R version 4.3.2</code></pre>
+<pre class="r"><code>library(sf)</code></pre>
+<pre><code>## Warning: package &#39;sf&#39; was built under R version 4.3.3</code></pre>
+<pre><code>## Linking to GEOS 3.11.2, GDAL 3.8.2, PROJ 9.3.1; sf_use_s2() is TRUE</code></pre>
+<pre class="r"><code>data.spasial &lt;- read_xlsx(&quot;C:/Users/Fanndry/Documents/output_datashpsulut1.xlsx&quot;,sheet = 1)
+head(data.spasial)</code></pre>
+<pre><code>## # A tibble: 6 × 8
+##   NAME_1          ID_2 NAME_2       TYPE_2 ENGTYPE_2 Longitude Latitude geometry
+##   &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;        &lt;chr&gt;  &lt;chr&gt;         &lt;dbl&gt;    &lt;dbl&gt; &lt;lgl&gt;   
+## 1 Sulawesi Utara   372 Bitung       Kotam… Municipa…      125.    1.48  NA      
+## 2 Sulawesi Utara   373 Bolaang Mon… Kabup… Regency        124.    0.659 NA      
+## 3 Sulawesi Utara   374 Kepulauan S… Kabup… Regency        126.    3.28  NA      
+## 4 Sulawesi Utara   375 Manado       Kotam… Municipa…      125.    1.52  NA      
+## 5 Sulawesi Utara   376 Minahasa Se… Kabup… Regency        125.    1.06  NA      
+## 6 Sulawesi Utara   377 Minahasa Ut… Kabup… Regency        125.    1.49  NA</code></pre>
+<pre class="r"><code>shp.Provsulut&lt;- read_sf(&quot;C:/Users/Fanndry/Documents/SULUT/Export_Output_2.dbf&quot;)
+shp.Provsulut</code></pre>
+<pre><code>## Simple feature collection with 9 features and 7 fields
+## Geometry type: MULTIPOLYGON
+## Dimension:     XY
+## Bounding box:  xmin: 123.1139 ymin: 0.291731 xmax: 127.1637 ymax: 5.5662
+## Geodetic CRS:  WGS 84
+## # A tibble: 9 × 8
+##   NAME_1          ID_2 NAME_2                TYPE_2 ENGTYPE_2 Longitude Latitude
+##   &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;                 &lt;chr&gt;  &lt;chr&gt;         &lt;dbl&gt;    &lt;dbl&gt;
+## 1 Sulawesi Utara   372 Bitung                Kotam… Municipa…      125.    1.48 
+## 2 Sulawesi Utara   373 Bolaang Mongondow     Kabup… Regency        124.    0.659
+## 3 Sulawesi Utara   374 Kepulauan Sangihe Ta… Kabup… Regency        126.    3.28 
+## 4 Sulawesi Utara   375 Manado                Kotam… Municipa…      125.    1.52 
+## 5 Sulawesi Utara   376 Minahasa Selatan      Kabup… Regency        125.    1.06 
+## 6 Sulawesi Utara   377 Minahasa Utara        Kabup… Regency        125.    1.49 
+## 7 Sulawesi Utara   378 Minahasa              Kabup… Regency        125.    1.24 
+## 8 Sulawesi Utara   379 Sangihe Talaud        Kabup… Regency        127.    4.23 
+## 9 Sulawesi Utara   380 Tomohon               Kabup… Regency        125.    1.32 
+## # ℹ 1 more variable: geometry &lt;MULTIPOLYGON [°]&gt;</code></pre>
+<pre class="r"><code>#menggabungkn data
+
+# Import library yang diperlukan
+library(sf)
+library(dplyr)  # Pastikan library dplyr digunakan untuk left_join
+
+gabung.Provsulut&lt;- left_join(shp.Provsulut,data.spasial,by=&quot;ID_2&quot;,relationship = &quot;many-to-many&quot;)
+
+plot.Provsulut&lt;- ggplot(data = gabung.Provsulut)+
+  geom_sf(aes(fill = Latitude.x))+
+  scale_fill_distiller(&quot;index rate&quot;, palette = &quot;PuRd&quot;)
+plot.Provsulut</code></pre>
+<p><img src="about_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
+</div>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
